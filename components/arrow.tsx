@@ -1,4 +1,6 @@
+
 export const Arrow = () => {
+
    return (
       <div className="absolute w-12 left-10 bottom-0 animate-bounce select-none
          before:absolute
@@ -18,8 +20,6 @@ export const Arrow = () => {
          after:-rotate-30
          after:rigth-8
          after:rounded-sm
-
-
       ">
          &nbsp;
       </div>
