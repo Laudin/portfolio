@@ -8,7 +8,7 @@ import Experience from "./components/Experience.vue";
 </script>
 
 <template>
-	<div class="bg-[#101111] text-white h-screen scroll-smooth">
+	<div class="bg-[#101111] text-white h-screen scroll-smooth scheme-only-light">
 		<HeaderComponent />
 		<div class="max-w-6xl m-auto">
 			<Hero />
