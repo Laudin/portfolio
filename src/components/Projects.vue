@@ -1,5 +1,6 @@
 <script setup lang="ts" name="ProjectsComponent">
 import { onMounted, useTemplateRef } from "vue";
+import GoIcon from "./assets/GoIcon.vue";
 
 const elementIsVisibleInViewport = (el: HTMLElement) => {
 	const { top } = el.getBoundingClientRect();
@@ -58,6 +59,23 @@ onMounted(() => {
 						src="/projects/mail-mark.png"
 					/>
 				</div>
+				<div class="view">
+					<a
+						href="https://marketing-email-laudins-projects.vercel.app/"
+						target="_blank"
+					>
+						<div>
+							Visit
+							<GoIcon />
+						</div>
+					</a>
+					<a href="https://github.com/Laudin/marketing-email" target="_blank">
+						<div>
+							<img src="/github.png" />
+							Repo
+						</div>
+					</a>
+				</div>
 			</div>
 
 			<div ref="second" class="relative mb-16 opacity-0">
@@ -105,6 +123,21 @@ onMounted(() => {
 						class="absolute z-1 w-full h-full top-0 bg-[url(/bg-dark.png)] bg-[auto_300px] opacity-20"
 					/>
 				</div>
+
+				<div class="view">
+					<a href="https://idealurl.vercel.app/" target="_blank">
+						<div>
+							Visit
+							<GoIcon />
+						</div>
+					</a>
+					<a href="https://github.com/Laudin/short" target="_blank">
+						<div>
+							<img src="/github.png" />
+							Repo
+						</div>
+					</a>
+				</div>
 			</div>
 
 			<div ref="third" class="opacity-0">
@@ -148,6 +181,15 @@ onMounted(() => {
 						class="absolute z-1 w-full h-full top-0 opacity-20 rounded-md"
 					/>
 				</div>
+
+				<div class="view">
+					<a href="https://oberlimp.com.ar" target="_blank">
+						<div>
+							Visit
+							<GoIcon />
+						</div>
+					</a>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -174,7 +216,7 @@ onMounted(() => {
 }
 h5 {
 	font-size: 24px;
-	color: #ffe8c5;
+	color: #fdeed8;
 }
 p {
 	color: #cccccc;
@@ -196,6 +238,37 @@ p {
 	padding: 6px 10px;
 	border-radius: 5px;
 	font-weight: 600;
+}
+.view {
+	display: flex;
+	gap: 16px;
+	margin-left: 16px;
+	margin-top: 16px;
+	font-size: large;
+}
+.view a {
+	padding: 8px;
+	background-color: #232223;
+	border-radius: 5px;
+	transition: all 0.2s ease-in-out;
+}
+.view a:hover {
+	background-color: #3b3a3b;
+}
+.view svg {
+	transition: all 0.2s ease-in-out;
+}
+.view a:hover svg {
+	transform: translate(2px, 0);
+}
+.view div {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+.view img {
+	width: 20px;
+	height: 20px;
 }
 
 @media screen and (max-width: 768px) {

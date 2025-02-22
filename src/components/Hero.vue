@@ -18,8 +18,6 @@
 			</button>
 		</div>
 	</div>
-
-	<!-- HTML !-->
 </template>
 
 <style scoped>

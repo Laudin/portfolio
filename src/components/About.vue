@@ -123,7 +123,7 @@
 	height: calc(100% + 0px);
 	z-index: 1;
 	animation: animate 20s linear infinite;
-	filter: blur(5px) opacity(0.2);
+	filter: blur(5px) opacity(0.4);
 }
 
 .contact:after {
