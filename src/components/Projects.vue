@@ -69,7 +69,10 @@ onMounted(() => {
 						/>
 						<h5 class="font-bold">Ideal URL</h5>
 					</div>
-					<p class="mt-4 mb-8 mx-2">Create your own email template for free</p>
+					<p class="mt-4 mb-8 mx-2">
+						Synthesize any long URL into a short, more comprehensive, and
+						easy-to-share link.
+					</p>
 
 					<div class="stack">
 						<div>
