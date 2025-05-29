@@ -5,10 +5,12 @@ import About from "./components/About.vue";
 import Technologies from "./components/Technologies.vue";
 import Projects from "./components/Projects.vue";
 import Experience from "./components/Experience.vue";
+import Chat from "./components/chat/Chat.vue";
 </script>
 
 <template>
 	<div class="bg-[#101111] text-white h-screen scroll-smooth scheme-only-light">
+		<Chat />
 		<HeaderComponent />
 		<div class="max-w-6xl m-auto">
 			<Hero />
