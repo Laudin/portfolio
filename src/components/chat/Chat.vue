@@ -26,7 +26,6 @@ const production = true
 	: "http://localhost:8787";
 
 function toggle() {
-	console.log("toggle");
 	open.value = !open.value;
 }
 
@@ -80,7 +79,6 @@ const formatMessageContent = (content: string) => {
 };
 
 const fetchQuestions = () => {
-	console.log(document.cookie);
 	fetch(production, {
 		method: "GET",
 		credentials: "include",
@@ -94,7 +92,6 @@ const fetchQuestions = () => {
 		.then((data: Message[]) => {
 			messages.value.push(...data);
 			scrollToBottom();
-			console.log(data);
 		})
 		.catch((error) => {
 			console.log(error);
