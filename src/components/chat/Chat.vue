@@ -21,7 +21,7 @@ const messages = ref<Message[]>([
 	},
 ]);
 const isThinking = ref(false);
-const production = true
+const production = false
 	? "https://chat.gastonlaudin.workers.dev"
 	: "http://localhost:8787";
 
@@ -137,22 +137,16 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 
 	while (true) {
 		const { done, value } = await reader.read();
+
 		if (done) break;
+		const data = decoder.decode(value, { stream: true });
 
-		const chunk = decoder.decode(value);
+		const buffer = data.split("\n");
 
-		try {
-			const dataJSON = JSON.parse((line ? line : chunk).split("data: ")[1]);
-			messages.value[messages.value.length - 1] = {
-				isUser: false,
-				content:
-					messages.value[messages.value.length - 1].content + dataJSON.content,
-			};
-			line = "";
-			scrollToBottom();
-		} catch {
-			line += chunk;
-			if (line.match(regex)) {
+		for (const chunk of buffer) {
+			if (!chunk) continue;
+
+			try {
 				const dataJSON = JSON.parse((line ? line : chunk).split("data: ")[1]);
 				messages.value[messages.value.length - 1] = {
 					isUser: false,
@@ -161,6 +155,19 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 						dataJSON.content,
 				};
 				line = "";
+				scrollToBottom();
+			} catch {
+				line += chunk;
+				if (line.match(regex)) {
+					const dataJSON = JSON.parse((line ? line : chunk).split("data: ")[1]);
+					messages.value[messages.value.length - 1] = {
+						isUser: false,
+						content:
+							messages.value[messages.value.length - 1].content +
+							dataJSON.content,
+					};
+					line = "";
+				}
 			}
 		}
 	}
@@ -168,7 +175,7 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 </script>
 
 <template>
-	<div class="fixed ml-6 right-1 bottom-1 md:right-6 md:bottom-6 z-50">
+	<div class="fixed ml-1 right-1 bottom-1 md:right-6 md:bottom-6 z-50">
 		<p
 			v-if="!open"
 			class="absolute right-[70px] text-nowrap bg-[#202020] px-3 py-2 rounded-full"
@@ -185,7 +192,7 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 		<div
 			:class="
 				{
-					open: 'w-[350px] min-w-[300px] md:w-[400px] h-[1500px] max-h-[calc(max(100vh-125px,200px))] bg-[#202020] rounded-md flex flex-col justify-between',
+					open: 'w-[100%] min-w-[300px] md:w-[400px] h-[1500px] max-h-[calc(max(100vh-225px,200px))] md:max-h-[calc(max(100vh-225px,200px))] bg-[#202020] rounded-md flex flex-col justify-between',
 					close:
 						'w-[50px] h-[50px] max-h-[50px] overflow-hidden bg-[#202020] rounded-full animate-pulse-shadow',
 				}[open ? 'open' : 'close']
@@ -217,7 +224,7 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 					class="mb-4 overflow-y-auto px-2"
 					ref="messagesContainer"
 					:style="{
-						flex: '1',
+						flex: '1 1 0',
 						maxHeight: 'calc(max(100vh - 250px, 200px))',
 						scrollbarColor: '#cccccc transparent',
 						scrollbarWidth: 'thin',
