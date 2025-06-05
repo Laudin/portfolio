@@ -1,5 +1,5 @@
 <script setup lang="ts" name="ChatComponent">
-import { ref, nextTick, onMounted, onUnmounted } from "vue";
+import { ref, nextTick } from "vue";
 import SendIcon from "../assets/SendIcon.vue";
 import CloseIcon from "../assets/CloseIcon.vue";
 import ThinkingAnimation from "../assets/ThinkingAnimation.vue";
