@@ -1,5 +1,5 @@
 <script setup lang="ts" name="ChatComponent">
-import { ref, nextTick } from "vue";
+import { ref, nextTick, onMounted, onUnmounted } from "vue";
 import SendIcon from "../assets/SendIcon.vue";
 import CloseIcon from "../assets/CloseIcon.vue";
 import ThinkingAnimation from "../assets/ThinkingAnimation.vue";
@@ -13,6 +13,7 @@ type Message = {
 const open = ref(false);
 const messagesContainer = ref<HTMLElement>();
 const question = ref("");
+const textareaRef = ref<HTMLTextAreaElement>();
 const messages = ref<Message[]>([
 	{
 		content:
@@ -21,13 +22,25 @@ const messages = ref<Message[]>([
 	},
 ]);
 const isThinking = ref(false);
-const production = false
+const production = true
 	? "https://chat.gastonlaudin.workers.dev"
 	: "http://localhost:8787";
 
 function toggle() {
 	open.value = !open.value;
 }
+
+const handleFocus = () => {
+	// Small delay to ensure keyboard is fully open
+	setTimeout(() => {
+		if (textareaRef.value && open.value) {
+			textareaRef.value.scrollIntoView({
+				behavior: "smooth",
+				block: "end",
+			});
+		}
+	}, 300);
+};
 
 const autoHeight = (payload: Event) => {
 	if (payload.target instanceof HTMLTextAreaElement) {
@@ -128,45 +141,51 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 	if (!stream.body) return;
 	const reader = stream.body.getReader();
 	const decoder = new TextDecoder();
-	let line = "";
+	let buffer = "";
 	const regex = /data: \{"content":"([^"]*)"\}/;
+	// Add a new empty message to the end
 	messages.value.push({
 		isUser: false,
 		content: "",
 	});
 
 	while (true) {
+		// normal way to deal with streams
 		const { done, value } = await reader.read();
 
 		if (done) break;
 		const data = decoder.decode(value, { stream: true });
 
-		const buffer = data.split("\n");
+		// data can contain multiple data lines, so we need to split them
+		const chunks = data.split("\n"); // \n is a custom delimiter
 
-		for (const chunk of buffer) {
-			if (!chunk) continue;
+		for (const chunk of chunks) {
+			if (!chunk) continue; // split adds an empty string at the end
 
 			try {
-				const dataJSON = JSON.parse((line ? line : chunk).split("data: ")[1]);
+				// this will throw an error if the chunk is not a valid JSON.
+				const dataJSON = JSON.parse(chunk.split("data: ")[1]);
+				// Add user message to the end
 				messages.value[messages.value.length - 1] = {
 					isUser: false,
 					content:
 						messages.value[messages.value.length - 1].content +
 						dataJSON.content,
 				};
-				line = "";
 				scrollToBottom();
 			} catch {
-				line += chunk;
-				if (line.match(regex)) {
-					const dataJSON = JSON.parse((line ? line : chunk).split("data: ")[1]);
+				// if the chunk is not a valid JSON, we add it to the buffer
+				buffer += chunk;
+				// we check if the buffer contains a valid JSON
+				if (buffer.match(regex)) {
+					const dataJSON = JSON.parse(buffer.split("data: ")[1]);
 					messages.value[messages.value.length - 1] = {
 						isUser: false,
 						content:
 							messages.value[messages.value.length - 1].content +
 							dataJSON.content,
 					};
-					line = "";
+					buffer = "";
 				}
 			}
 		}
@@ -197,7 +216,11 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 						'w-[50px] h-[50px] max-h-[50px] overflow-hidden bg-[#202020] rounded-full animate-pulse-shadow',
 				}[open ? 'open' : 'close']
 			"
-			class="transition-[width,max-height] duration-300 ease-in-out"
+			class="float-right"
+			style="
+				transition: width 0.3s ease-in-out, max-height 0.3s ease-in-out,
+					height 0.3s ease-in-out, border-radius 0s ease-in-out;
+			"
 		>
 			<GIcon
 				v-if="!open"
@@ -220,35 +243,39 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 			</div>
 
 			<div :class="!open && 'opacity-0'" class="px-1 py-2 h-full flex flex-col">
-				<div
-					class="mb-4 overflow-y-auto px-2"
-					ref="messagesContainer"
-					:style="{
-						flex: '1 1 0',
-						maxHeight: 'calc(max(100vh - 250px, 200px))',
-						scrollbarColor: '#cccccc transparent',
-						scrollbarWidth: 'thin',
-						scrollbarGutter: 'stable', // always put the space even if there's no scrollbar
-					}"
-				>
-					<div v-for="message in messages" class="text-sm">
-						<div v-if="message.isUser" class="flex justify-end">
-							<p class="ml-10 bg-gray-700 p-3 rounded-md mb-3 inline-flex">
-								{{ message.content }}
-							</p>
-						</div>
-						<div v-else class="flex gap-2 mr-10 mb-3">
-							<GIcon class="text-white min-w-6 h-6 rounded-full" />
+				<div class="flex align-bottom" style="flex: 1 1 0">
+					<div
+						class="mb-4 overflow-y-auto px-2 mt-auto"
+						ref="messagesContainer"
+						:style="{
+							scrollBehavior: 'smooth',
+							maxHeight: 'calc(max(100vh - 350px, 80px))',
+							scrollbarColor: '#cccccc transparent',
+							scrollbarWidth: 'thin',
+							scrollbarGutter: 'stable',
+						}"
+					>
+						<div v-for="message in messages" class="text-sm">
+							<div v-if="message.isUser" class="flex justify-end">
+								<p class="ml-10 bg-gray-700 p-3 rounded-md mb-3 inline-flex">
+									{{ message.content }}
+								</p>
+							</div>
+							<div v-else class="flex gap-2 mr-10 mb-3">
+								<GIcon class="text-white min-w-6 h-6 rounded-full" />
 
-							<p class="" v-html="formatMessageContent(message.content)"></p>
+								<p class="" v-html="formatMessageContent(message.content)"></p>
+							</div>
 						</div>
+						<ThinkingAnimation v-if="isThinking" />
 					</div>
-					<ThinkingAnimation v-if="isThinking" />
 				</div>
 
 				<div class="flex w-full h-auto gap-0 bg-neutral-900 rounded-md">
 					<textarea
+						ref="textareaRef"
 						@keydown.enter="sendQuestion"
+						@focus="handleFocus"
 						rows="1"
 						v-model="question"
 						@input="autoHeight"

@@ -23,8 +23,8 @@ const downloadPDF = () => {
 </script>
 
 <template>
-	<div class="bg-[#23232354] w-full fixed z-50 px-8">
-		<div class="m-auto flex justify-between items-center h-24">
+	<div class="bg-[#232323] md:bg-[#23232354] w-full fixed z-50 px-8">
+		<div class="m-auto flex justify-between items-center h-14 md:h-24">
 			<a href="#hero" class="text-lg z-10">
 				<span class="text-gray-400">Gastón</span> Laudin
 			</a>
