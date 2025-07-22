@@ -138,6 +138,16 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 	});
 
 	isThinking.value = false;
+
+	if (stream.status !== 200) {
+		messages.value.push({
+			content:
+				"❌ Sorry, I couldn't process your request. Please try again later.",
+			isUser: false,
+		});
+		return;
+	}
+
 	if (!stream.body) return;
 	const reader = stream.body.getReader();
 	const decoder = new TextDecoder();
