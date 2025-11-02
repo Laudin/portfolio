@@ -96,7 +96,7 @@ const fetchQuestions = () => {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
-			"x-chat-user-id": localStorage.getItem("chatUserId") || "",
+			"X-Chat-User-Id": localStorage.getItem("chatUserId") || "",
 		},
 	})
 		.then((response) => {
@@ -147,7 +147,7 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 		return;
 	}
 
-	const chatUserId = stream.headers.get("chatUserId");
+	const chatUserId = stream.headers.get("X-Chat-User-Id");
 	if (chatUserId) localStorage.setItem("chatUserId", chatUserId);
 
 	if (!stream.body) return;
