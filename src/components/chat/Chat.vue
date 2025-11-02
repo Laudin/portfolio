@@ -148,6 +148,10 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 		return;
 	}
 
+	const chatUserId = stream.headers.get("chatUserId");
+	if (chatUserId)
+		document.cookie = `chatUserId=${chatUserId}; path=/; SameSite=Lax; max-age=31536000`;
+
 	if (!stream.body) return;
 	const reader = stream.body.getReader();
 	const decoder = new TextDecoder();
