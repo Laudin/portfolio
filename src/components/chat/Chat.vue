@@ -94,9 +94,9 @@ const formatMessageContent = (content: string) => {
 const fetchQuestions = () => {
 	fetch(production, {
 		method: "GET",
-		credentials: "include",
 		headers: {
 			"Content-Type": "application/json",
+			"x-chat-user-id": localStorage.getItem("chatUserId") || "",
 		},
 	})
 		.then((response) => {
@@ -128,7 +128,6 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 
 	const stream = await fetch(production, {
 		method: "POST",
-		credentials: "include",
 		headers: {
 			"Content-Type": "text/event-stream",
 		},
@@ -149,8 +148,7 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 	}
 
 	const chatUserId = stream.headers.get("chatUserId");
-	if (chatUserId)
-		document.cookie = `chatUserId=${chatUserId};domain=.gastonlaudin.com; path=/; max-age=31536000; SameSite=None; Secure`;
+	if (chatUserId) localStorage.setItem("chatUserId", chatUserId);
 
 	if (!stream.body) return;
 	const reader = stream.body.getReader();
