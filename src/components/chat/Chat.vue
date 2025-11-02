@@ -150,7 +150,7 @@ const sendQuestion = async (event: KeyboardEvent | MouseEvent) => {
 
 	const chatUserId = stream.headers.get("chatUserId");
 	if (chatUserId)
-		document.cookie = `chatUserId=${chatUserId}; path=/; SameSite=Lax; max-age=31536000`;
+		document.cookie = `chatUserId=${chatUserId};domain=.gastonlaudin.com; path=/; max-age=31536000; SameSite=None; Secure`;
 
 	if (!stream.body) return;
 	const reader = stream.body.getReader();
